@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { CurrencyInput } from '@/components/currency-input';
 import { calculateConsorcio, calculateRiskAnalysis, ConsorcioParams, ConsorcioResult } from '@/lib/consorcio-calculator';
 import { AlertTriangle, CheckCircle2, TrendingUp, Home, DollarSign } from 'lucide-react';
 
@@ -120,21 +121,19 @@ export function AnaliseCompraImovel({ onCalculate }: AnaliseCompraImovelProps) {
               <h3 className="font-semibold text-lg">Informações do Imóvel</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="valor-imovel">Valor Pedido pelo Proprietário (R$)</Label>
-                  <Input
+                  <Label htmlFor="valor-imovel">Valor Pedido pelo Proprietário</Label>
+                  <CurrencyInput
                     id="valor-imovel"
-                    type="number"
                     value={valorImovel}
-                    onChange={(e) => setValorImovel(Number(e.target.value))}
+                    onValueChange={(value) => setValorImovel(value)}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="valor-proposta">Valor da Proposta (R$)</Label>
-                  <Input
+                  <Label htmlFor="valor-proposta">Valor da Proposta</Label>
+                  <CurrencyInput
                     id="valor-proposta"
-                    type="number"
                     value={valorProposta}
-                    onChange={(e) => setValorProposta(Number(e.target.value))}
+                    onValueChange={(value) => setValorProposta(value)}
                   />
                 </div>
               </div>
@@ -155,32 +154,29 @@ export function AnaliseCompraImovel({ onCalculate }: AnaliseCompraImovelProps) {
               <h3 className="font-semibold text-lg">Capital Disponível</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="caixa">Caixa Disponível (R$)</Label>
-                  <Input
+                  <Label htmlFor="caixa">Caixa Disponível</Label>
+                  <CurrencyInput
                     id="caixa"
-                    type="number"
                     value={caixa}
-                    onChange={(e) => setCaixa(Number(e.target.value))}
+                    onValueChange={(value) => setCaixa(value)}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="titulos">Títulos Imobiliários (R$)</Label>
-                  <Input
+                  <Label htmlFor="titulos">Títulos Imobiliários</Label>
+                  <CurrencyInput
                     id="titulos"
-                    type="number"
                     value={titulosImobiliarios}
-                    onChange={(e) => setTitulosImobiliarios(Number(e.target.value))}
+                    onValueChange={(value) => setTitulosImobiliarios(value)}
                     className="bg-yellow-50"
                   />
                   <p className="text-xs text-muted-foreground">Não pretende mexer</p>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="crypto">Crypto (R$)</Label>
-                  <Input
+                  <Label htmlFor="crypto">Crypto</Label>
+                  <CurrencyInput
                     id="crypto"
-                    type="number"
                     value={crypto}
-                    onChange={(e) => setCrypto(Number(e.target.value))}
+                    onValueChange={(value) => setCrypto(value)}
                   />
                 </div>
               </div>
@@ -199,21 +195,19 @@ export function AnaliseCompraImovel({ onCalculate }: AnaliseCompraImovelProps) {
               <h3 className="font-semibold text-lg">Dados do Consórcio</h3>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="valor-carta">Valor da Carta (R$)</Label>
-                  <Input
+                  <Label htmlFor="valor-carta">Valor da Carta</Label>
+                  <CurrencyInput
                     id="valor-carta"
-                    type="number"
                     value={valorCarta}
-                    onChange={(e) => setValorCarta(Number(e.target.value))}
+                    onValueChange={(value) => setValorCarta(value)}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="lance-inicial">Lance Inicial (R$)</Label>
-                  <Input
+                  <Label htmlFor="lance-inicial">Lance Inicial</Label>
+                  <CurrencyInput
                     id="lance-inicial"
-                    type="number"
                     value={lanceInicial}
-                    onChange={(e) => setLanceInicial(Number(e.target.value))}
+                    onValueChange={(value) => setLanceInicial(value)}
                   />
                 </div>
                 <div className="space-y-2">

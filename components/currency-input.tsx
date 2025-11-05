@@ -1,0 +1,100 @@
+'use client';
+
+import { forwardRef, useState, useEffect } from 'react';
+import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
+
+interface CurrencyInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  value: number;
+  onValueChange: (value: number) => void;
+}
+
+export const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(
+  ({ value, onValueChange, className, ...props }, ref) => {
+    const [displayValue, setDisplayValue] = useState('');
+
+    useEffect(() => {
+      // Formatar valor inicial
+      if (value !== undefined && value !== null) {
+        const formatted = formatCurrency(value);
+        setDisplayValue(formatted);
+      }
+    }, [value]);
+
+    const formatCurrency = (val: number): string => {
+      return new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(val);
+    };
+
+    const parseCurrency = (str: string): number => {
+      // Remove tudo exceto números, vírgula e ponto
+      const cleaned = str.replace(/[^\d,.-]/g, '');
+      // Substitui vírgula por ponto
+      const normalized = cleaned.replace(',', '.');
+      // Remove pontos extras (mantém apenas o último)
+      const parts = normalized.split('.');
+      let result = parts[0];
+      if (parts.length > 1) {
+        result += '.' + parts.slice(1).join('');
+      }
+      return parseFloat(result) || 0;
+    };
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const inputValue = e.target.value;
+      
+      // Se estiver vazio, permite
+      if (inputValue === '') {
+        setDisplayValue('');
+        onValueChange(0);
+        return;
+      }
+
+      // Remove formatação para calcular
+      const numericValue = parseCurrency(inputValue);
+      
+      // Atualiza o valor numérico
+      onValueChange(numericValue);
+      
+      // Formata para exibição
+      setDisplayValue(formatCurrency(numericValue));
+    };
+
+    const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+      // Ao focar, mostra apenas o número (sem R$)
+      const numericValue = value || 0;
+      setDisplayValue(numericValue.toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }));
+      e.target.select();
+    };
+
+    const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+      // Ao perder o foco, formata com R$
+      const numericValue = value || 0;
+      setDisplayValue(formatCurrency(numericValue));
+    };
+
+    return (
+      <Input
+        ref={ref}
+        type="text"
+        inputMode="decimal"
+        value={displayValue}
+        onChange={handleChange}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        className={cn(className)}
+        {...props}
+      />
+    );
+  }
+);
+
+CurrencyInput.displayName = 'CurrencyInput';
+
