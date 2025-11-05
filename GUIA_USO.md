@@ -13,11 +13,20 @@ O sistema estará disponível em: **http://localhost:3001**
 
 ### 2. Carregar Arquivos Excel
 
+**Opção 1: Carregar Arquivos Padrão (Recomendado)**
+1. Acesse a aba **"Carregar Dados"**
+2. Clique no botão **"Carregar Arquivos Padrão (Pasta Data)"**
+3. O sistema irá automaticamente processar todos os arquivos Excel da pasta `data/`
+4. Todos os arquivos de faturamento de 2010 a 2024 serão carregados automaticamente
+
+**Opção 2: Carregar Arquivos Manualmente**
 1. Acesse a aba **"Carregar Dados"**
 2. Clique em **"Arquivos Excel"** e selecione os arquivos de faturamento
 3. Você pode selecionar múltiplos arquivos de uma vez
 4. Clique em **"Carregar e Analisar"**
 5. O sistema irá processar todos os arquivos e extrair os dados financeiros
+
+**Nota:** Os arquivos Excel já estão incluídos na pasta `data/` do projeto. Use o botão "Carregar Arquivos Padrão" para uma análise completa e rápida.
 
 ### 3. Configurar Parâmetros de Análise
 
