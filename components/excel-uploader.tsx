@@ -66,7 +66,9 @@ export function ExcelUploader({ onFilesLoaded }: ExcelUploaderProps) {
       const data = await response.json();
       
       if (!response.ok || !data.records || data.records.length === 0) {
-        setError('Nenhum dado válido encontrado nos arquivos padrão. Verifique se os arquivos estão na pasta data.');
+        const errorMsg = data.message || 
+          'Nenhum dado válido encontrado nos arquivos padrão. Verifique se os arquivos não estão protegidos por senha.';
+        setError(errorMsg);
         return;
       }
       

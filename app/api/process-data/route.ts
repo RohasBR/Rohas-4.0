@@ -18,7 +18,17 @@ export async function GET() {
       try {
         const filePath = join(dataDir, fileName);
         const fileBuffer = await readFile(filePath);
-        const workbook = XLSX.read(fileBuffer, { type: 'buffer' });
+        
+        let workbook;
+        try {
+          workbook = XLSX.read(fileBuffer, { type: 'buffer' });
+        } catch (readError: any) {
+          if (readError.message && readError.message.includes('password-protected')) {
+            console.error(`Arquivo protegido por senha: ${fileName}`);
+            continue; // Pula arquivos protegidos
+          }
+          throw readError;
+        }
         
         workbook.SheetNames.forEach((sheetName) => {
           const worksheet = workbook.Sheets[sheetName];
@@ -72,8 +82,11 @@ export async function GET() {
             }
           });
         });
-      } catch (error) {
+      } catch (error: any) {
         console.error(`Error processing file ${fileName}:`, error);
+        if (error.message && error.message.includes('password-protected')) {
+          console.error(`Arquivo ${fileName} está protegido por senha. Remova a senha para processar.`);
+        }
       }
     }
     
@@ -83,7 +96,10 @@ export async function GET() {
     return NextResponse.json({ 
       records: allRecords,
       filesProcessed: excelFiles.length,
-      totalRecords: allRecords.length
+      totalRecords: allRecords.length,
+      message: allRecords.length === 0 
+        ? 'Nenhum dado encontrado. Verifique se os arquivos não estão protegidos por senha.'
+        : undefined
     });
   } catch (error) {
     console.error('Error processing data files:', error);

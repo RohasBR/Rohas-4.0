@@ -8,7 +8,15 @@ export async function readExcelFile(file: File): Promise<FinancialRecord[]> {
     reader.onload = (e) => {
       try {
         const data = e.target?.result;
-        const workbook = XLSX.read(data, { type: 'binary' });
+        let workbook;
+        try {
+          workbook = XLSX.read(data, { type: 'binary' });
+        } catch (readError: any) {
+          if (readError.message && readError.message.includes('password-protected')) {
+            throw new Error(`Arquivo ${file.name} está protegido por senha. Remova a senha para processar.`);
+          }
+          throw readError;
+        }
         const records: FinancialRecord[] = [];
         
         workbook.SheetNames.forEach((sheetName) => {
