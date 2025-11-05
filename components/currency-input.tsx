@@ -69,43 +69,34 @@ export const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(
       const inputValue = e.target.value;
       setIsEditing(true);
       
+      // Permite digitação livre durante a edição
+      // Atualiza o display com o que o usuário está digitando
+      setDisplayValue(inputValue);
+      
       // Se estiver vazio, permite
       if (inputValue === '' || inputValue === 'R$' || inputValue.trim() === '') {
-        setDisplayValue('');
         onValueChange(0);
         return;
       }
 
-      // Remove formatação para calcular
+      // Remove formatação para calcular o valor numérico
       const numericValue = parseCurrency(inputValue);
       
-      // Atualiza o valor numérico
+      // Atualiza o valor numérico (mas mantém o que o usuário digitou no display)
       onValueChange(numericValue);
-      
-      // Durante a edição, mostra apenas o número formatado (sem R$)
-      if (numericValue > 0) {
-        setDisplayValue(numericValue.toLocaleString('pt-BR', {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        }));
-      } else {
-        setDisplayValue('');
-      }
     };
 
     const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
       setIsEditing(true);
-      // Ao focar, mostra apenas o número formatado (sem R$, mas com separadores)
+      // Ao focar, mostra o número sem formatação para facilitar edição
       const numericValue = value || 0;
       if (numericValue > 0) {
-        setDisplayValue(numericValue.toLocaleString('pt-BR', {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        }));
+        // Mostra apenas o número, sem separadores durante edição
+        setDisplayValue(numericValue.toString());
       } else {
         setDisplayValue('');
       }
-      // Seleciona o texto após um pequeno delay para permitir o clique
+      // Seleciona o texto para facilitar substituição
       setTimeout(() => e.target.select(), 0);
     };
 
