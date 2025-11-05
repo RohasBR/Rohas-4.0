@@ -97,10 +97,16 @@ export const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(
       if (e.key === 'Enter') {
         e.preventDefault();
         e.currentTarget.blur(); // Força o blur que vai formatar
-      }
-      // Valida ao pressionar Tab
-      if (e.key === 'Tab') {
-        e.currentTarget.blur(); // Força o blur antes de mudar de campo
+        // Opcional: avança para o próximo campo
+        const form = e.currentTarget.form;
+        if (form) {
+          const inputs = Array.from(form.querySelectorAll('input, select, textarea'));
+          const currentIndex = inputs.indexOf(e.currentTarget);
+          const nextInput = inputs[currentIndex + 1] as HTMLElement;
+          if (nextInput) {
+            nextInput.focus();
+          }
+        }
       }
     };
 
