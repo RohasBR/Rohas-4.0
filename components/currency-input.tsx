@@ -32,17 +32,33 @@ export const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(
     }, [value, isEditing]);
 
     const parseCurrency = (str: string): number => {
+      if (!str || str.trim() === '') return 0;
+      
       // Remove tudo exceto números, vírgula e ponto
-      const cleaned = str.replace(/[^\d,.-]/g, '');
-      // Substitui vírgula por ponto
-      const normalized = cleaned.replace(',', '.');
-      // Remove pontos extras (mantém apenas o último)
-      const parts = normalized.split('.');
-      let result = parts[0];
-      if (parts.length > 1) {
-        result += '.' + parts.slice(1).join('');
+      let cleaned = str.replace(/[^\d,.-]/g, '');
+      
+      // Se não tem nada, retorna 0
+      if (!cleaned || cleaned.trim() === '') return 0;
+      
+      // Remove pontos de milhares (formato brasileiro: 1.234.567,89)
+      // Se tem vírgula, assume que é formato brasileiro
+      if (cleaned.includes(',')) {
+        // Remove todos os pontos (milhares)
+        cleaned = cleaned.replace(/\./g, '');
+        // Substitui vírgula por ponto (decimal)
+        cleaned = cleaned.replace(',', '.');
+      } else {
+        // Se não tem vírgula, pode ter ponto como decimal ou milhares
+        // Se tem mais de um ponto, assume que são milhares
+        const pointCount = (cleaned.match(/\./g) || []).length;
+        if (pointCount > 1) {
+          // Remove todos os pontos (milhares)
+          cleaned = cleaned.replace(/\./g, '');
+        }
       }
-      return parseFloat(result) || 0;
+      
+      const result = parseFloat(cleaned);
+      return isNaN(result) ? 0 : result;
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
