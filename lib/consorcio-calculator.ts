@@ -62,7 +62,9 @@ export function calculateRiskAnalysis(
   titulosImobiliarios: number,
   crypto: number,
   consorcioResult: ConsorcioResult,
-  lanceInicial: number
+  lanceInicial: number,
+  aluguelAtual: number = 0,
+  receitaSobreloja: number = 0
 ) {
   const capitalTotal = caixa + titulosImobiliarios + crypto;
   const diferencaImovel = valorImovel - valorProposta;
@@ -95,17 +97,44 @@ export function calculateRiskAnalysis(
     risco.pontos.push('⚠ Pode ser necessário usar parte dos títulos imobiliários');
   }
   
-  // Verificar parcela vs receita (assumindo receita média)
+  // Calcular economia/receita líquida mensal com a compra
+  const economiaAluguel = aluguelAtual; // Economia por não pagar aluguel
+  const receitaLiquidaMensal = economiaAluguel + receitaSobreloja; // R$ 11.500/mês
+  const saldoMensal = receitaLiquidaMensal - consorcioResult.parcelaMensal;
+  
+  // Verificar parcela vs receita (assumindo receita média do negócio)
   const receitaMensalEstimada = 50000; // Valor estimado, pode ser ajustado
   const porcentagemParcela = (consorcioResult.parcelaMensal / receitaMensalEstimada) * 100;
   
-  if (porcentagemParcela > 50) {
-    risco.nivel = risco.nivel === 'BAIXO' ? 'MÉDIO' : 'ALTO';
-    risco.pontos.push('⚠ Parcela mensal representa mais de 50% da receita estimada');
-  } else if (porcentagemParcela > 30) {
-    risco.pontos.push('⚠ Parcela mensal representa entre 30-50% da receita estimada');
+  // Análise considerando economia de aluguel e receita da sobreloja
+  if (saldoMensal > 0) {
+    risco.pontos.push(`✓ Economia líquida mensal: R$ ${saldoMensal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`);
+    risco.pontos.push(`  - Economia de aluguel: R$ ${aluguelAtual.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`);
+    risco.pontos.push(`  - Receita sobreloja: R$ ${receitaSobreloja.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`);
+    risco.pontos.push(`  - Parcela consórcio: R$ ${consorcioResult.parcelaMensal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`);
+    
+    if (risco.nivel === 'ALTO') {
+      risco.nivel = 'MÉDIO';
+    } else if (risco.nivel === 'MÉDIO') {
+      risco.nivel = 'BAIXO';
+    }
   } else {
-    risco.pontos.push('✓ Parcela mensal em nível confortável');
+    risco.pontos.push(`⚠ Déficit mensal: R$ ${Math.abs(saldoMensal).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`);
+    risco.pontos.push(`  - Economia de aluguel: R$ ${aluguelAtual.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`);
+    risco.pontos.push(`  - Receita sobreloja: R$ ${receitaSobreloja.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`);
+    risco.pontos.push(`  - Parcela consórcio: R$ ${consorcioResult.parcelaMensal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`);
+    
+    if (Math.abs(saldoMensal) > receitaMensalEstimada * 0.3) {
+      risco.nivel = risco.nivel === 'BAIXO' ? 'MÉDIO' : 'ALTO';
+    }
+  }
+  
+  if (porcentagemParcela > 50) {
+    risco.pontos.push('⚠ Parcela mensal representa mais de 50% da receita estimada do negócio');
+  } else if (porcentagemParcela > 30) {
+    risco.pontos.push('⚠ Parcela mensal representa entre 30-50% da receita estimada do negócio');
+  } else {
+    risco.pontos.push('✓ Parcela mensal em nível confortável em relação à receita do negócio');
   }
   
   // Análise de liquidez
@@ -123,6 +152,10 @@ export function calculateRiskAnalysis(
     capitalDisponivel,
     porcentagemCapital,
     porcentagemParcela,
+    economiaAluguel,
+    receitaSobreloja,
+    receitaLiquidaMensal,
+    saldoMensal,
   };
 }
 

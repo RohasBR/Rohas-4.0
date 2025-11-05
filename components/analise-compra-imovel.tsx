@@ -24,6 +24,10 @@ export function AnaliseCompraImovel({ onCalculate }: AnaliseCompraImovelProps) {
   const [titulosImobiliarios, setTitulosImobiliarios] = useState(500000);
   const [crypto, setCrypto] = useState(700000);
   
+  // Dados de aluguel e receita
+  const [aluguelAtual, setAluguelAtual] = useState(7000);
+  const [receitaSobreloja, setReceitaSobreloja] = useState(4500);
+  
   // Dados do consórcio
   const [valorCarta, setValorCarta] = useState(2000000);
   const [lanceInicial, setLanceInicial] = useState(500000);
@@ -39,7 +43,7 @@ export function AnaliseCompraImovel({ onCalculate }: AnaliseCompraImovelProps) {
   
   useEffect(() => {
     calculate();
-  }, [valorImovel, valorProposta, caixa, titulosImobiliarios, crypto, valorCarta, lanceInicial, prazoAnos, taxaAdministrativa]);
+  }, [valorImovel, valorProposta, caixa, titulosImobiliarios, crypto, aluguelAtual, receitaSobreloja, valorCarta, lanceInicial, prazoAnos, taxaAdministrativa]);
   
   const calculate = () => {
     const params: ConsorcioParams = {
@@ -60,7 +64,9 @@ export function AnaliseCompraImovel({ onCalculate }: AnaliseCompraImovelProps) {
       titulosImobiliarios,
       crypto,
       result,
-      lanceInicial
+      lanceInicial,
+      aluguelAtual,
+      receitaSobreloja
     );
     setRiskAnalysis(risk);
     
@@ -382,6 +388,19 @@ export function AnaliseCompraImovel({ onCalculate }: AnaliseCompraImovelProps) {
                     </span>
                   </div>
                 </div>
+                {riskAnalysis.saldoMensal !== undefined && (
+                  <div className="border-t pt-3 mt-3">
+                    <div className="flex justify-between text-lg">
+                      <span className="font-bold">Saldo Mensal Líquido:</span>
+                      <span className={`font-bold ${riskAnalysis.saldoMensal >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        {formatCurrency(riskAnalysis.saldoMensal)}/mês
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Receita líquida (aluguel + sobreloja) - Parcela do consórcio
+                    </p>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
