@@ -12,14 +12,7 @@ interface CurrencyInputProps extends React.InputHTMLAttributes<HTMLInputElement>
 export const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(
   ({ value, onValueChange, className, ...props }, ref) => {
     const [displayValue, setDisplayValue] = useState('');
-
-    useEffect(() => {
-      // Formatar valor inicial
-      if (value !== undefined && value !== null) {
-        const formatted = formatCurrency(value);
-        setDisplayValue(formatted);
-      }
-    }, [value]);
+    const [isEditing, setIsEditing] = useState(false);
 
     const formatCurrency = (val: number): string => {
       return new Intl.NumberFormat('pt-BR', {
@@ -29,6 +22,14 @@ export const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(
         maximumFractionDigits: 2,
       }).format(val);
     };
+
+    useEffect(() => {
+      // Formatar valor inicial apenas se não estiver editando
+      if (!isEditing && value !== undefined && value !== null) {
+        const formatted = formatCurrency(value);
+        setDisplayValue(formatted);
+      }
+    }, [value, isEditing]);
 
     const parseCurrency = (str: string): number => {
       // Remove tudo exceto números, vírgula e ponto
@@ -46,9 +47,10 @@ export const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const inputValue = e.target.value;
+      setIsEditing(true);
       
       // Se estiver vazio, permite
-      if (inputValue === '' || inputValue === 'R$') {
+      if (inputValue === '' || inputValue === 'R$' || inputValue.trim() === '') {
         setDisplayValue('');
         onValueChange(0);
         return;
@@ -60,7 +62,7 @@ export const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(
       // Atualiza o valor numérico
       onValueChange(numericValue);
       
-      // Formata para exibição (sem R$ durante a edição)
+      // Durante a edição, mostra apenas o número formatado (sem R$)
       if (numericValue > 0) {
         setDisplayValue(numericValue.toLocaleString('pt-BR', {
           minimumFractionDigits: 2,
@@ -72,6 +74,7 @@ export const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(
     };
 
     const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+      setIsEditing(true);
       // Ao focar, mostra apenas o número formatado (sem R$, mas com separadores)
       const numericValue = value || 0;
       if (numericValue > 0) {
@@ -87,6 +90,7 @@ export const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(
     };
 
     const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+      setIsEditing(false);
       // Ao perder o foco, formata com R$
       const numericValue = value || 0;
       setDisplayValue(formatCurrency(numericValue));
