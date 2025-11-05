@@ -92,6 +92,18 @@ export const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(
       setDisplayValue(formatCurrency(numericValue));
     };
 
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+      // Valida ao pressionar Enter
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        e.currentTarget.blur(); // Força o blur que vai formatar
+      }
+      // Valida ao pressionar Tab
+      if (e.key === 'Tab') {
+        e.currentTarget.blur(); // Força o blur antes de mudar de campo
+      }
+    };
+
     return (
       <Input
         ref={ref}
@@ -101,6 +113,7 @@ export const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(
         onChange={handleChange}
         onFocus={handleFocus}
         onBlur={handleBlur}
+        onKeyDown={handleKeyDown}
         className={cn(className)}
         {...props}
       />

@@ -233,6 +233,12 @@ export function AnaliseCompraImovel({ onCalculate }: AnaliseCompraImovelProps) {
                     step="0.1"
                     value={taxaAdministrativa}
                     onChange={(e) => setTaxaAdministrativa(Number(e.target.value))}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        e.currentTarget.blur();
+                      }
+                    }}
                   />
                 </div>
               </div>
