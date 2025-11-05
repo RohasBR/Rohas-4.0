@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { FinancialStats } from '@/components/financial-stats';
 import { RevenueChart, GrowthChart } from '@/components/revenue-chart';
 import { DecisionAnalysisComponent } from '@/components/decision-analysis';
+import { AnaliseCompraImovel } from '@/components/analise-compra-imovel';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FinancialRecord, FinancialAnalysis, InvestmentScenario, DecisionAnalysis } from '@/lib/types';
@@ -57,8 +58,11 @@ export default function Home() {
 
 
         {/* Tabs */}
-        <Tabs defaultValue="analysis" className="space-y-4">
+        <Tabs defaultValue="compra-imovel" className="space-y-4">
           <TabsList>
+            <TabsTrigger value="compra-imovel">
+              Análise de Compra
+            </TabsTrigger>
             <TabsTrigger value="analysis" disabled={!analysis}>
               Análise Financeira
             </TabsTrigger>
@@ -66,6 +70,10 @@ export default function Home() {
               Análise de Decisão
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="compra-imovel" className="space-y-4">
+            <AnaliseCompraImovel />
+          </TabsContent>
 
           <TabsContent value="analysis" className="space-y-4">
             {analysis ? (
