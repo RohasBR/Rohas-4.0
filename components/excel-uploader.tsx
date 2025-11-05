@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Upload, FileX, FileCheck } from 'lucide-react';
+import { Upload, FileX, FileCheck, FolderOpen } from 'lucide-react';
 import { readMultipleExcelFiles } from '@/lib/excel-reader';
 import { FinancialRecord } from '@/lib/types';
 
@@ -57,6 +57,28 @@ export function ExcelUploader({ onFilesLoaded }: ExcelUploaderProps) {
     }
   };
 
+  const handleLoadDefaultFiles = async () => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch('/api/process-data');
+      const data = await response.json();
+      
+      if (!response.ok || !data.records || data.records.length === 0) {
+        setError('Nenhum dado válido encontrado nos arquivos padrão. Verifique se os arquivos estão na pasta data.');
+        return;
+      }
+      
+      onFilesLoaded(data.records);
+    } catch (err) {
+      setError('Erro ao carregar arquivos padrão. Verifique se os arquivos estão na pasta data.');
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -102,17 +124,36 @@ export function ExcelUploader({ onFilesLoaded }: ExcelUploaderProps) {
           </div>
         )}
 
-        <div className="flex gap-2">
-          <Button onClick={handleLoad} disabled={isLoading || files.length === 0}>
-            <Upload className="mr-2 h-4 w-4" />
-            {isLoading ? 'Carregando...' : 'Carregar e Analisar'}
-          </Button>
-          {files.length > 0 && (
-            <Button variant="outline" onClick={handleClear} disabled={isLoading}>
-              <FileX className="mr-2 h-4 w-4" />
-              Limpar
+        <div className="space-y-2">
+          <div className="flex gap-2">
+            <Button onClick={handleLoad} disabled={isLoading || files.length === 0}>
+              <Upload className="mr-2 h-4 w-4" />
+              {isLoading ? 'Carregando...' : 'Carregar e Analisar'}
             </Button>
-          )}
+            {files.length > 0 && (
+              <Button variant="outline" onClick={handleClear} disabled={isLoading}>
+                <FileX className="mr-2 h-4 w-4" />
+                Limpar
+              </Button>
+            )}
+          </div>
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">ou</span>
+            </div>
+          </div>
+          <Button 
+            variant="outline" 
+            onClick={handleLoadDefaultFiles} 
+            disabled={isLoading}
+            className="w-full"
+          >
+            <FolderOpen className="mr-2 h-4 w-4" />
+            {isLoading ? 'Carregando...' : 'Carregar Arquivos Padrão (Pasta Data)'}
+          </Button>
         </div>
       </CardContent>
     </Card>

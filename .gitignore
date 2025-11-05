@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# data files (optional - uncomment if you don't want to commit Excel files)
+# /data/*.xlsx
+# /data/*.xls
