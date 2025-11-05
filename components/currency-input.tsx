@@ -25,9 +25,13 @@ export const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(
 
     useEffect(() => {
       // Formatar valor inicial apenas se não estiver editando
-      if (!isEditing && value !== undefined && value !== null) {
-        const formatted = formatCurrency(value);
-        setDisplayValue(formatted);
+      if (!isEditing) {
+        if (value !== undefined && value !== null && value > 0) {
+          const formatted = formatCurrency(value);
+          setDisplayValue(formatted);
+        } else if (value === 0 || value === null || value === undefined) {
+          setDisplayValue('');
+        }
       }
     }, [value, isEditing]);
 
