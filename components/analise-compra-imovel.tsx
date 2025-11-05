@@ -196,6 +196,39 @@ export function AnaliseCompraImovel({ onCalculate }: AnaliseCompraImovelProps) {
               </div>
             </div>
 
+            {/* Dados de Aluguel e Receita */}
+            <div className="space-y-4">
+              <h3 className="font-semibold text-lg">Aluguel Atual e Receita da Sobreloja</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="aluguel-atual">Aluguel Atual (R$/mês)</Label>
+                  <CurrencyInput
+                    id="aluguel-atual"
+                    value={aluguelAtual}
+                    onValueChange={(value) => setAluguelAtual(value)}
+                  />
+                  <p className="text-xs text-muted-foreground">Valor que você paga atualmente</p>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="receita-sobreloja">Receita da Sobreloja (R$/mês)</Label>
+                  <CurrencyInput
+                    id="receita-sobreloja"
+                    value={receitaSobreloja}
+                    onValueChange={(value) => setReceitaSobreloja(value)}
+                  />
+                  <p className="text-xs text-muted-foreground">Valor que pode receber alugando a sobreloja</p>
+                </div>
+              </div>
+              <div className="p-3 bg-green-50 rounded-md border border-green-200">
+                <p className="text-sm font-semibold text-green-800">
+                  Receita Líquida Mensal: {formatCurrency(aluguelAtual + receitaSobreloja)}/mês
+                </p>
+                <p className="text-xs text-green-700 mt-1">
+                  Economia de aluguel + Receita da sobreloja após comprar o imóvel
+                </p>
+              </div>
+            </div>
+
             {/* Dados do Consórcio */}
             <div className="space-y-4">
               <h3 className="font-semibold text-lg">Dados do Consórcio</h3>
