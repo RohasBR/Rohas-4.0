@@ -48,7 +48,7 @@ export const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(
       const inputValue = e.target.value;
       
       // Se estiver vazio, permite
-      if (inputValue === '') {
+      if (inputValue === '' || inputValue === 'R$') {
         setDisplayValue('');
         onValueChange(0);
         return;
@@ -60,18 +60,30 @@ export const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(
       // Atualiza o valor numérico
       onValueChange(numericValue);
       
-      // Formata para exibição
-      setDisplayValue(formatCurrency(numericValue));
+      // Formata para exibição (sem R$ durante a edição)
+      if (numericValue > 0) {
+        setDisplayValue(numericValue.toLocaleString('pt-BR', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }));
+      } else {
+        setDisplayValue('');
+      }
     };
 
     const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-      // Ao focar, mostra apenas o número (sem R$)
+      // Ao focar, mostra apenas o número formatado (sem R$, mas com separadores)
       const numericValue = value || 0;
-      setDisplayValue(numericValue.toLocaleString('pt-BR', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      }));
-      e.target.select();
+      if (numericValue > 0) {
+        setDisplayValue(numericValue.toLocaleString('pt-BR', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }));
+      } else {
+        setDisplayValue('');
+      }
+      // Seleciona o texto após um pequeno delay para permitir o clique
+      setTimeout(() => e.target.select(), 0);
     };
 
     const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
