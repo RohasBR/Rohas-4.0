@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Upload, FileX, FileCheck, FolderOpen } from 'lucide-react';
+import { Upload, FileX, FileCheck, FolderOpen, AlertTriangle } from 'lucide-react';
 import { readMultipleExcelFiles } from '@/lib/excel-reader';
 import { FinancialRecord } from '@/lib/types';
 
@@ -122,7 +122,17 @@ export function ExcelUploader({ onFilesLoaded }: ExcelUploaderProps) {
 
         {error && (
           <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-            {error}
+            <div className="flex items-start gap-2">
+              <AlertTriangle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="font-medium">{error}</p>
+                {error.includes('senha') && (
+                  <p className="mt-2 text-xs">
+                    Consulte o arquivo <code className="bg-background px-1 py-0.5 rounded">INSTRUCOES_SENHA.md</code> para instruções de como remover a senha dos arquivos Excel.
+                  </p>
+                )}
+              </div>
+            </div>
           </div>
         )}
 
